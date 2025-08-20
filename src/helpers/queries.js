@@ -27,3 +27,14 @@ export const crearProducto = async(productoNuevo)=>{
         return null
     }
 }
+export const borrarProducto = async(id)=>{
+    try{
+        const respuesta = await fetch(urlProductos+`/${id}`,{
+            method: 'DELETE'
+        })
+        return respuesta
+    }catch(error){
+        console.error(error)
+        return null
+    }
+}
