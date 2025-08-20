@@ -10,7 +10,15 @@ export const listarProductos = async()=>{
         return null
     }
 }
-
+export const obtenerProducto = async(id)=>{
+    try{
+        const respuesta = await fetch(urlProductos+`/${id}`)
+        return respuesta
+    }catch(error){
+        console.error(error)
+        return null
+    }
+}
 // post
 export const crearProducto = async(productoNuevo)=>{
     try{

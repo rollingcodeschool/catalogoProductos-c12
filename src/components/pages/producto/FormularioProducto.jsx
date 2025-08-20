@@ -3,8 +3,13 @@ import { Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import Swal from "sweetalert2";
-import { crearProducto } from "../../../helpers/queries";
-const FormularioProducto = ({ titulo, cargarProducto, buscarProducto, modificarProducto }) => {
+import { crearProducto, obtenerProducto } from "../../../helpers/queries";
+const FormularioProducto = ({
+  titulo,
+  cargarProducto,
+  buscarProducto,
+  modificarProducto,
+}) => {
   const {
     register,
     handleSubmit,
@@ -13,36 +18,42 @@ const FormularioProducto = ({ titulo, cargarProducto, buscarProducto, modificarP
     formState: { errors },
   } = useForm();
   const { id } = useParams();
-  const navegacion = useNavigate()
+  const navegacion = useNavigate();
 
-  useEffect(()=>{
-    if(titulo === 'Editar producto'){
-      const productoEditar= buscarProducto(id)
-      console.log(productoEditar)
-      //dibujar los datos del producto en el formulario
-      setValue('nombreProducto', productoEditar.nombreProducto)
-      setValue('precio', productoEditar.precio)
-      setValue('imagen', productoEditar.imagen)
-      setValue('descripcion_breve', productoEditar.descripcion_breve)
-      setValue('descripcion_amplia', productoEditar.descripcion_amplia)
-      setValue('categoria', productoEditar.categoria)
+  useEffect(() => {
+    if (titulo === "Editar producto") {
+      cargarDatos();
     }
-  },[])
+  }, []);
+
+  const cargarDatos = async () => {
+    const respuesta = await obtenerProducto(id);
+    if (respuesta.status === 200) {
+      const productoEditar = await respuesta.json();
+      //dibujar los datos del producto en el formulario
+      setValue("nombreProducto", productoEditar.nombreProducto);
+      setValue("precio", productoEditar.precio);
+      setValue("imagen", productoEditar.imagen);
+      setValue("descripcion_breve", productoEditar.descripcion_breve);
+      setValue("descripcion_amplia", productoEditar.descripcion_amplia);
+      setValue("categoria", productoEditar.categoria);
+    }
+  };
 
   const onSubmit = async (producto) => {
     //si estoy creando
     if (titulo === "Crear producto") {
-      const respuesta = await crearProducto(producto)
-      if(respuesta.status === 201) {
+      const respuesta = await crearProducto(producto);
+      if (respuesta.status === 201) {
         Swal.fire({
           title: "Creaste un producto",
           text: `El producto ${producto.nombreProducto} fue creado correctamente`,
           icon: "success",
         });
-         //limpiar el formulario
+        //limpiar el formulario
         reset();
-      }else{
-         Swal.fire({
+      } else {
+        Swal.fire({
           title: "Ocurrio un error",
           text: `El producto ${producto.nombreProducto} no pudo ser creado. Intente nuevamente en unos minutos.`,
           icon: "Error",
@@ -51,15 +62,15 @@ const FormularioProducto = ({ titulo, cargarProducto, buscarProducto, modificarP
     } else {
       //aqui agrego la logica de editar
       console.log("aqui debo editar el producto");
-      console.log('producto a editar', producto)
-      if(modificarProducto(id,producto)){
-         Swal.fire({
+      console.log("producto a editar", producto);
+      if (modificarProducto(id, producto)) {
+        Swal.fire({
           title: "Editaste un producto",
           text: `El producto '${producto.nombreProducto}' fue editado correctamente`,
           icon: "success",
         });
         //aqui quiero redireccionar
-        navegacion('/administrador')
+        navegacion("/administrador");
       }
     }
   };
@@ -145,8 +156,8 @@ const FormularioProducto = ({ titulo, cargarProducto, buscarProducto, modificarP
             <option value="">Seleccione una opcion</option>
             <option value="Infusiones">Infusiones</option>
             <option value="Batidos">Batidos</option>
-            <option value="dulce">Dulce</option>
-            <option value="salado">Salado</option>
+            <option value="Dulce">Dulce</option>
+            <option value="Salado">Salado</option>
           </Form.Select>
           <Form.Text className="text-danger">
             {errors.categoria?.message}
