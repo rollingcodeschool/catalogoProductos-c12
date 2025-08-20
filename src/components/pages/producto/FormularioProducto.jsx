@@ -3,7 +3,11 @@ import { Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import Swal from "sweetalert2";
-import { crearProducto, obtenerProducto } from "../../../helpers/queries";
+import {
+  crearProducto,
+  editarProducto,
+  obtenerProducto,
+} from "../../../helpers/queries";
 const FormularioProducto = ({
   titulo,
   cargarProducto,
@@ -61,9 +65,8 @@ const FormularioProducto = ({
       }
     } else {
       //aqui agrego la logica de editar
-      console.log("aqui debo editar el producto");
-      console.log("producto a editar", producto);
-      if (modificarProducto(id, producto)) {
+      const respuesta = await editarProducto(producto, id);
+      if (respuesta.status === 200) {
         Swal.fire({
           title: "Editaste un producto",
           text: `El producto '${producto.nombreProducto}' fue editado correctamente`,
@@ -72,6 +75,7 @@ const FormularioProducto = ({
         //aqui quiero redireccionar
         navegacion("/administrador");
       }
+      // aqui mostrar un mensaje de error
     }
   };
 
