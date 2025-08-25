@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
 import { Container, Card, Row, Col } from "react-bootstrap";
 import { useParams } from "react-router";
+import { obtenerProducto } from "../../helpers/queries";
 
-const DetalleProducto = ({buscarProducto}) => {
+const DetalleProducto = () => {
   const {id} = useParams()
   const [productoBuscado, setProductoBuscado] = useState({})
 
   useEffect(()=>{
-    const producto = buscarProducto(id)
-    setProductoBuscado(producto)
+    cargarDatos()
   },[])
 
+    const cargarDatos = async () => {
+      const respuesta = await obtenerProducto(id);
+      if (respuesta.status === 200) {
+        const productoEditar = await respuesta.json();
+        setProductoBuscado(productoEditar)
+      }
+    };
+  
   return (
     <Container className="my-3 mainSection">
       <Card>
