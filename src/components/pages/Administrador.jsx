@@ -2,9 +2,26 @@ import { Button, Table } from "react-bootstrap";
 import ItemProducto from "./producto/ItemProducto";
 import { Link } from "react-router";
 import { productosPrueba } from "../../data/productosPrueba";
+import { useEffect, useState } from "react";
+import { listarProductos } from "../../helpers/queries";
 
 const Administrador = ({ setProductos, productos, borrarProducto }) => {
-  console.log(productosPrueba);
+  const [listaProductos, setListaProductos] = useState([]);
+
+  useEffect(() => {
+    obtenerProductos();
+  }, []);
+
+  const obtenerProductos = async () => {
+    const respuesta = await listarProductos();
+    console.log(respuesta);
+    if(respuesta.status === 200){
+      const datos = await respuesta.json()
+      setListaProductos(datos)
+    }else{
+      console.log('Ocurrio un error al obtener los productos')
+    }
+  };
 
   const cargarProductosPrueba = () => {
     //traer datos de prueba y cargarlo en el state
@@ -21,7 +38,7 @@ const Administrador = ({ setProductos, productos, borrarProducto }) => {
           </Link>
           <Button
             variant="info"
-            className="text-light"
+            className="text-light disabled"
             onClick={cargarProductosPrueba}
           >
             <i className="bi bi-database-fill-up"></i>
@@ -41,9 +58,14 @@ const Administrador = ({ setProductos, productos, borrarProducto }) => {
           </tr>
         </thead>
         <tbody>
-          {
-            productos.map((producto, indice)=> <ItemProducto key={producto.id} producto={producto} fila={indice+1} borrarProducto={borrarProducto}></ItemProducto>)
-          }
+          {listaProductos.map((producto, indice) => (
+            <ItemProducto
+              key={producto._id}
+              producto={producto}
+              fila={indice + 1}
+              setListaProductos={setListaProductos}
+            ></ItemProducto>
+          ))}
         </tbody>
       </Table>
     </section>
