@@ -1,6 +1,7 @@
 import { Row, Col, Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { login } from "../../helpers/queries";
 
 const Login = ({setUsuarioLogueado}) => {
     const {
@@ -11,7 +12,14 @@ const Login = ({setUsuarioLogueado}) => {
   } = useForm()
   const navegacion = useNavigate()
 
-  const loginUser = (user)=>{
+  const loginUser = async (user)=>{
+    const respuesta = await login(user)
+    if(respuesta.status === 200){
+      const datos = await respuesta.json()
+      setUsuarioLogueado({nombreUsuario: datos.nombreUsuario, token: datos.token})
+    }else{
+      //agregar un mensaje de error
+    }
     if(user.email === import.meta.env.VITE_API_EMAIL && user.password === import.meta.env.VITE_API_PASSWORD){
        setUsuarioLogueado(true) //actualizar el state del usuario logueado
        sessionStorage.setItem('userKey', true) //para mantener la sesion del admin, guardar en sesion storage

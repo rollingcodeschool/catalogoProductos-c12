@@ -13,7 +13,7 @@ import ProtectorRutas from "./components/routes/ProtectorRutas";
 import { v4 as uuidv4 } from 'uuid';
 
 function App() {
-const usuarioSessionStorage = JSON.parse(sessionStorage.getItem('userKey')) || false  
+const usuarioSessionStorage = JSON.parse(sessionStorage.getItem('userKey')) || {}  
 const productosLocalStorage = JSON.parse(localStorage.getItem('productos-cafe')) || []
 const [usuarioLogueado, setUsuarioLogueado] = useState(usuarioSessionStorage)
 const [productos, setProductos] = useState(productosLocalStorage)
